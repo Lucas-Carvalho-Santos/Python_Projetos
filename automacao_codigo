@@ -1,0 +1,39 @@
+#importando as bibliotecas necessárias
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import openpyxl
+
+#aqui estou definindo qual navegador será usado para acessar a página 'Ofertas do dia da Kabum'
+navegador = webdriver.Edge()
+
+#aqui estou passando a URL da página para o navegador acessar usando o método get
+navegador.get('https://www.kabum.com.br/ofertas/ofertadodia')
+
+# o input serve para para que o app não feche a página após acessa-la
+#input()
+
+#Agora extraindo titulos e preços e preços sem desconto
+titulos = navegador.find_elements(By.XPATH, "//div[@class='sc-93fa31de-15 dCsZrx']")
+precos = navegador.find_elements(By.XPATH, "//span[@class='sc-6889e656-2 bYcXfg priceCard']")
+precos_originais = navegador.find_elements(By.XPATH, "//span[@class='sc-6889e656-1 btrvWW oldPriceCard']")
+
+#criando a planilha para inserir os dados
+workbook = openpyxl.Workbook()
+#criando a aba Produtos
+workbook.create_sheet('produtos')
+#mostrando em qual aba serão inseridos os dados
+sheet_produtos = workbook['produtos']
+sheet_produtos['A1'].value = 'Produto'
+sheet_produtos['B1'].value = 'Preco'
+sheet_produtos['C1'].value= 'Preco_original'
+
+#salvando a planilha
+workbook.save('produtos.xlsx')
+
+# inserindo os dados em uma planilha.
+# aqui utilizei o método zip para que a iteração só ocorra enquanto tiverem elementos nas três listas
+for titulo, preco, preco_original in zip(titulos, precos, precos_originais):
+    sheet_produtos.append([titulo.text, preco.text, preco_original.text])
+
+workbook.save('produtos.xlsx')
+
