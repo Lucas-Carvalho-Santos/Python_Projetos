@@ -13,9 +13,8 @@ navegador.get('https://www.kabum.com.br/ofertas/ofertadodia')
 #input()
 
 #Agora extraindo titulos e preços e preços sem desconto
-titulos = navegador.find_elements(By.XPATH, "//div[@class='sc-93fa31de-15 dCsZrx']")
-precos = navegador.find_elements(By.XPATH, "//span[@class='sc-6889e656-2 bYcXfg priceCard']")
-precos_originais = navegador.find_elements(By.XPATH, "//span[@class='sc-6889e656-1 btrvWW oldPriceCard']")
+titulos = navegador.find_elements(By.XPATH, "//span[@class='sc-d79c9c3f-0 nlmfp sc-cdc9b13f-16 eHyEuD nameCard']")
+precos = navegador.find_elements(By.XPATH, "//span[@class='sc-620f2d27-2 bMHwXA priceCard']")
 
 #criando a planilha para inserir os dados
 workbook = openpyxl.Workbook()
@@ -25,15 +24,13 @@ workbook.create_sheet('produtos')
 sheet_produtos = workbook['produtos']
 sheet_produtos['A1'].value = 'Produto'
 sheet_produtos['B1'].value = 'Preco'
-sheet_produtos['C1'].value= 'Preco_original'
 
 #salvando a planilha
 workbook.save('produtos.xlsx')
 
 # inserindo os dados em uma planilha.
 # aqui utilizei o método zip para que a iteração só ocorra enquanto tiverem elementos nas três listas
-for titulo, preco, preco_original in zip(titulos, precos, precos_originais):
-    sheet_produtos.append([titulo.text, preco.text, preco_original.text])
+for titulo, preco, preco_original in zip(titulos, precos):
+    sheet_produtos.append([titulo.text, preco.text])
 
 workbook.save('produtos.xlsx')
-
